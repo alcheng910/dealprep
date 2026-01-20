@@ -13,7 +13,7 @@ import { generateCallScript } from '@/lib/messaging/call-script-generator';
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { company_url, what_we_sell, region } = body;
+    const { company_url, what_we_sell, target_persona, region } = body;
 
     // Validate input
     if (!company_url || typeof company_url !== 'string') {
@@ -84,7 +84,7 @@ export async function POST(request: NextRequest) {
 
     // Step 5: Identify target personas
     console.log('Step 4: Identifying target personas...');
-    const personas = identifyTargetPersonas(company.industry, what_we_sell);
+    const personas = identifyTargetPersonas(company.industry, what_we_sell, target_persona);
 
     // Step 6: Find and enrich contacts
     console.log('Step 5: Finding and enriching contacts...');

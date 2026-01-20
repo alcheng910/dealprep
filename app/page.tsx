@@ -18,6 +18,7 @@ export default function Home() {
     const payload = {
       company_url: formData.get('url') as string,
       what_we_sell: formData.get('product') as string || undefined,
+      target_persona: formData.get('persona') as string || undefined,
       region: formData.get('region') as string || undefined,
     };
 
@@ -111,7 +112,23 @@ export default function Home() {
                 type="text"
                 id="product"
                 name="product"
-                placeholder="Sales enablement software for B2B teams"
+                defaultValue="CRE deal management system"
+                placeholder="CRE deal management system"
+                className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                disabled={loading}
+              />
+            </div>
+
+            <div>
+              <label htmlFor="persona" className="block text-sm font-medium text-slate-700 mb-2">
+                Target Persona (optional)
+              </label>
+              <input
+                type="text"
+                id="persona"
+                name="persona"
+                defaultValue="acquisition associate or analyst"
+                placeholder="acquisition associate or analyst"
                 className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 disabled={loading}
               />
