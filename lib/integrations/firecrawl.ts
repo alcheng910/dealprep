@@ -25,16 +25,18 @@ export interface FirecrawlJobPosting {
 
 export async function scrapeWebsite(url: string): Promise<FirecrawlPage> {
   try {
-    const result = await firecrawl.scrapeUrl(url, {
+    const result: any = await firecrawl.scrape(url, {
       formats: ['markdown', 'html'],
     });
 
-    if (!result.success) {
-      throw new Error('Failed to scrape website');
+    // v2 API returns data directly without success wrapper
+    if (!result.markdown) {
+      const errorMsg = result.error || 'Failed to scrape website';
+      throw new Error(`Firecrawl error: ${errorMsg}`);
     }
 
     return {
-      url: result.url || url,
+      url: result.metadata?.url || result.url || url,
       markdown: result.markdown || '',
       html: result.html,
       metadata: result.metadata,
@@ -60,11 +62,11 @@ export async function crawlForJobs(
 
     for (const jobUrl of jobUrls) {
       try {
-        const result = await firecrawl.scrapeUrl(jobUrl, {
+        const result: any = await firecrawl.scrape(jobUrl, {
           formats: ['markdown'],
         });
 
-        if (result.success && result.markdown) {
+        if (result.markdown) {
           // Simple parsing - look for job titles in the markdown
           const lines = result.markdown.split('\n');
           const jobPattern = /engineer|developer|manager|director|vp|sales|marketing|analyst/i;
