@@ -57,40 +57,15 @@ export async function POST(request: NextRequest) {
       disqualifiers: icpEvaluation.disqualifiers,
     };
 
-    // Step 4: If not ICP fit, return early (no contact enrichment)
-    if (!icpFit.fit) {
-      console.log('Not ICP fit. Stopping before enrichment.');
-
-      const result: ResearchOutput = {
-        company,
-        initiatives,
-        tech_stack: techStack,
-        hiring_signals: hiringSignals,
-        icp_fit: icpFit,
-        personas: [],
-        contacts: [],
-        messaging: {
-          emails: [],
-          call_script: {
-            opener: '',
-            discovery_questions: [],
-            objections: [],
-          },
-        },
-      };
-
-      return NextResponse.json(result);
-    }
-
-    // Step 5: Identify target personas
+    // Step 4: Identify target personas
     console.log('Step 4: Identifying target personas...');
     const personas = identifyTargetPersonas(company.industry, what_we_sell, target_persona);
 
-    // Step 6: Find and enrich contacts
+    // Step 5: Find and enrich contacts
     console.log('Step 5: Finding and enriching contacts...');
     const contacts = await findContacts(company_url, personas);
 
-    // Step 7: Generate messaging
+    // Step 6: Generate messaging
     console.log('Step 6: Generating personalized messaging...');
     const emails = generateEmails(
       company,
@@ -107,7 +82,7 @@ export async function POST(request: NextRequest) {
       what_we_sell
     );
 
-    // Step 8: Return full result
+    // Step 7: Return full result
     const result: ResearchOutput = {
       company,
       initiatives,

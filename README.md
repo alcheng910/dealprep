@@ -52,8 +52,8 @@ Open [http://localhost:3000](http://localhost:3000) in your browser.
 1. **Input**: Enter a company website URL (optional: what you sell, target region)
 2. **Research**: Automatically gathers company intel, tech stack, hiring signals
 3. **ICP Check**: Evaluates fit against ideal customer profile
-4. **Enrichment**: If fit, finds contacts and enriches with emails (verified)
-5. **Output**: Generates prep packet with emails, call scripts, and contact list
+4. **Enrichment**: Finds contacts and enriches with emails (verified)
+5. **Output**: Generates prep packet with emails, call scripts, contact list, and ICP assessment
 
 ### What You Get
 - Analyst-style company brief
@@ -118,13 +118,13 @@ APOLLO_API_KEY=your_apollo_key
 
 ### Core Features
 ✅ Stateless (no auth, no database)
-✅ ICP-aware (stops enrichment if not a fit)
+✅ ICP evaluation (provides fit assessment for every prospect)
 ✅ Source citations for all claims
 ✅ Email verification
 ✅ Multi-format export
 
 ### Guardrails
-- Never enrich contacts if ICP fit = false
+- Always provide ICP fit assessment alongside results
 - Cite sources for every signal
 - Label confidence levels
 - No hallucinated data

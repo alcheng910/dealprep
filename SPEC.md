@@ -26,12 +26,11 @@ The system automatically gathers:
 ### 3. ICP Fit Check
 Evaluate against a predefined ICP (hardcoded in application logic)
 
-**If NOT a fit:**
-- Explain why
-- **Stop before contact enrichment** (cost savings)
-
-**If IS a fit:**
-- Continue automatically to persona discovery
+**Result:**
+- Provides fit assessment with reasons and disqualifiers
+- Displayed alongside all research results
+- **Does not gate contact enrichment** (always continues to persona discovery)
+- Helps users prioritize prospects based on fit criteria
 
 ### 4. Persona + Contact Discovery
 - Identify 2–3 relevant personas
@@ -166,7 +165,7 @@ Generate analyst-style research packet:
 ## Guardrails & Quality Standards
 
 ### Must-Haves
-- ✅ Never enrich contacts if `icp_fit.fit = false`
+- ✅ Always provide ICP fit assessment with research results
 - ✅ Cite sources for every initiative, signal, and tech claim
 - ✅ Clearly label uncertainty (confidence levels)
 - ✅ No hallucinated revenue or headcount
@@ -259,7 +258,7 @@ const ICP_CRITERIA = {
 - **Apollo.io:** Credits per enrichment
 
 **Optimization:**
-- Stop enrichment if ICP fit = false
+- ICP fit assessment helps users prioritize high-value prospects
 - Cache results temporarily (optional future enhancement)
 - Rate limit requests if needed
 
