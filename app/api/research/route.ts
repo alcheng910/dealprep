@@ -15,6 +15,9 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const { company_url, what_we_sell, target_persona, region } = body;
 
+    // Apply default for what_we_sell if not provided or empty
+    const finalWhatWeSell = what_we_sell || "CRE deal management";
+
     // Validate input
     if (!company_url || typeof company_url !== 'string') {
       return NextResponse.json(
@@ -34,6 +37,7 @@ export async function POST(request: NextRequest) {
     }
 
     console.log('Starting research for:', company_url);
+    console.log(`Using what_we_sell: ${finalWhatWeSell}${what_we_sell ? '' : ' (default)'}`);
 
     // Step 1: Extract company intel
     console.log('Step 1: Extracting company intel...');
@@ -59,7 +63,7 @@ export async function POST(request: NextRequest) {
 
     // Step 4: Identify target personas
     console.log('Step 4: Identifying target personas...');
-    const personas = identifyTargetPersonas(company.industry, what_we_sell, target_persona);
+    const personas = identifyTargetPersonas(company.industry, finalWhatWeSell, target_persona);
 
     // Step 5: Find and enrich contacts
     console.log('Step 5: Finding and enriching contacts...');
@@ -72,14 +76,14 @@ export async function POST(request: NextRequest) {
       contacts,
       initiatives,
       hiringSignals,
-      what_we_sell
+      finalWhatWeSell
     );
 
     const callScript = generateCallScript(
       company,
       initiatives,
       hiringSignals,
-      what_we_sell
+      finalWhatWeSell
     );
 
     // Step 7: Return full result

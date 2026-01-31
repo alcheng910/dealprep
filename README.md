@@ -50,6 +50,7 @@ Open [http://localhost:3000](http://localhost:3000) in your browser.
 ## How It Works
 
 1. **Input**: Enter a company website URL (optional: what you sell, target region)
+   - Defaults to "CRE deal management" if not specified
 2. **Research**: Automatically gathers company intel, tech stack, hiring signals
 3. **ICP Check**: Evaluates fit against ideal customer profile
 4. **Enrichment**: Finds contacts and enriches with emails (verified)

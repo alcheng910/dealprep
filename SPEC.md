@@ -12,7 +12,7 @@ AEs and SDRs who want fast, consistent prospect research without setup, onboardi
 
 ### 1. Input
 - **Company website URL** (required)
-- **"What we sell"** (optional, 1 sentence)
+- **"What we sell"** (optional, defaults to "CRE deal management")
 - **Region / market focus** (optional)
 
 ### 2. Research & Signal Extraction
@@ -248,6 +248,31 @@ const ICP_CRITERIA = {
   }
 }
 ```
+
+---
+
+## Default Targeting Configuration
+
+The system defaults to CRE (Commercial Real Estate) targeting:
+
+```typescript
+const DEFAULT_CONFIG = {
+  what_we_sell: "CRE deal management",
+  target_personas: [
+    "Acquisitions Associate",  // Primary decision-maker
+    "Acquisitions Analyst",    // Entry-level support role
+    "Director of Acquisitions" // Executive oversight
+  ]
+}
+```
+
+**Behavior**:
+- If user provides `what_we_sell` → uses their value
+- If user provides `target_persona` → overrides persona detection
+- If neither provided → defaults to CRE targeting
+
+**Rationale**:
+CRE is the primary use case for DealPrep, optimizing for this vertical by default improves out-of-box experience.
 
 ---
 
