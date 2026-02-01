@@ -1,7 +1,13 @@
 import axios from 'axios';
+import {
+  mockSearchPeople,
+  mockEnrichContact,
+  mockVerifyEmail,
+} from '@/lib/mocks';
 
 const APOLLO_API_URL = 'https://api.apollo.io/v1';
 const APOLLO_API_KEY = process.env.APOLLO_API_KEY || '';
+const MOCK_MODE = process.env.MOCK_MODE === 'true';
 
 export interface ApolloContact {
   id: string;
@@ -29,11 +35,17 @@ export interface ApolloSearchParams {
 export async function searchPeople(
   params: ApolloSearchParams
 ): Promise<ApolloContact[]> {
+  // Mock mode check
+  if (MOCK_MODE) {
+    console.log('[MOCK MODE] Apollo searchPeople - returning fake data');
+    await new Promise(resolve => setTimeout(resolve, 300)); // Simulate API delay
+    return mockSearchPeople(params.organization_domain, params.person_titles);
+  }
+
   try {
     const response = await axios.post(
       `${APOLLO_API_URL}/mixed_people/search`,
       {
-        api_key: APOLLO_API_KEY,
         q_organization_domains: [params.organization_domain],
         person_titles: params.person_titles,
         page: params.page || 1,
@@ -43,6 +55,7 @@ export async function searchPeople(
         headers: {
           'Content-Type': 'application/json',
           'Cache-Control': 'no-cache',
+          'X-Api-Key': APOLLO_API_KEY,
         },
       }
     );
@@ -55,16 +68,23 @@ export async function searchPeople(
 }
 
 export async function enrichContact(email: string): Promise<ApolloContact | null> {
+  // Mock mode check
+  if (MOCK_MODE) {
+    console.log('[MOCK MODE] Apollo enrichContact - returning fake data');
+    await new Promise(resolve => setTimeout(resolve, 200));
+    return mockEnrichContact(email);
+  }
+
   try {
     const response = await axios.post(
       `${APOLLO_API_URL}/people/match`,
       {
-        api_key: APOLLO_API_KEY,
         email,
       },
       {
         headers: {
           'Content-Type': 'application/json',
+          'X-Api-Key': APOLLO_API_KEY,
         },
       }
     );
@@ -77,16 +97,23 @@ export async function enrichContact(email: string): Promise<ApolloContact | null
 }
 
 export async function verifyEmail(email: string): Promise<boolean> {
+  // Mock mode check
+  if (MOCK_MODE) {
+    console.log('[MOCK MODE] Apollo verifyEmail - returning fake verification');
+    await new Promise(resolve => setTimeout(resolve, 100));
+    return mockVerifyEmail(email);
+  }
+
   try {
     const response = await axios.post(
       `${APOLLO_API_URL}/email_status`,
       {
-        api_key: APOLLO_API_KEY,
         email,
       },
       {
         headers: {
           'Content-Type': 'application/json',
+          'X-Api-Key': APOLLO_API_KEY,
         },
       }
     );

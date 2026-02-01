@@ -1,8 +1,13 @@
 import FirecrawlApp from '@mendable/firecrawl-js';
+import {
+  mockScrapeWebsite,
+  mockCrawlForJobs,
+} from '@/lib/mocks';
 
 const firecrawl = new FirecrawlApp({
   apiKey: process.env.FIRECRAWL_API_KEY || '',
 });
+const MOCK_MODE = process.env.MOCK_MODE === 'true';
 
 export interface FirecrawlPage {
   url: string;
@@ -24,6 +29,13 @@ export interface FirecrawlJobPosting {
 }
 
 export async function scrapeWebsite(url: string): Promise<FirecrawlPage> {
+  // Mock mode check
+  if (MOCK_MODE) {
+    console.log('[MOCK MODE] Firecrawl scrapeWebsite - returning fake data');
+    await new Promise(resolve => setTimeout(resolve, 400));
+    return mockScrapeWebsite(url);
+  }
+
   try {
     const result: any = await firecrawl.scrape(url, {
       formats: ['markdown', 'html'],
@@ -50,6 +62,13 @@ export async function scrapeWebsite(url: string): Promise<FirecrawlPage> {
 export async function crawlForJobs(
   companyUrl: string
 ): Promise<FirecrawlJobPosting[]> {
+  // Mock mode check
+  if (MOCK_MODE) {
+    console.log('[MOCK MODE] Firecrawl crawlForJobs - returning fake data');
+    await new Promise(resolve => setTimeout(resolve, 300));
+    return mockCrawlForJobs(companyUrl);
+  }
+
   try {
     // Try common job posting URL patterns
     const jobUrls = [

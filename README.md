@@ -37,6 +37,24 @@ You'll need accounts and API keys for:
 
 Add these to your `.env.local` file.
 
+### Test Mode (Optional)
+
+To test the application without consuming API credits:
+
+1. Set `MOCK_MODE=true` in your `.env.local` file
+2. API keys can be set to any value (they won't be used)
+3. The app will return realistic fake data for CRE companies
+
+```bash
+# .env.local
+MOCK_MODE=true
+TAVILY_API_KEY=not_needed_in_mock_mode
+FIRECRAWL_API_KEY=not_needed_in_mock_mode
+APOLLO_API_KEY=not_needed_in_mock_mode
+```
+
+To use real APIs, set `MOCK_MODE=false` and provide valid API keys.
+
 ### Run Development Server
 
 ```bash
@@ -111,6 +129,9 @@ See `.env.example` for all required variables.
 TAVILY_API_KEY=your_tavily_key
 FIRECRAWL_API_KEY=your_firecrawl_key
 APOLLO_API_KEY=your_apollo_key
+
+# Optional: Enable test mode to avoid consuming API credits
+MOCK_MODE=false
 ```
 
 ---
