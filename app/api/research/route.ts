@@ -7,7 +7,7 @@ import { detectHiringSignals } from '@/lib/research/hiring-signals';
 import { evaluateICP } from '@/lib/icp/evaluator';
 import { identifyTargetPersonas } from '@/lib/enrichment/persona-mapper';
 import { findContacts } from '@/lib/enrichment/contact-finder';
-import { generateEmails } from '@/lib/messaging/email-generator';
+import { generateEmails, generateEmailHooks } from '@/lib/messaging/email-generator';
 import { generateCallScript } from '@/lib/messaging/call-script-generator';
 
 export async function POST(request: NextRequest) {
@@ -71,20 +71,11 @@ export async function POST(request: NextRequest) {
 
     // Step 6: Generate messaging
     console.log('Step 6: Generating personalized messaging...');
-    const emails = generateEmails(
-      company,
-      contacts,
-      initiatives,
-      hiringSignals,
-      finalWhatWeSell
-    );
-
-    const callScript = generateCallScript(
-      company,
-      initiatives,
-      hiringSignals,
-      finalWhatWeSell
-    );
+    const [emails, callScript, emailHooks] = await Promise.all([
+      Promise.resolve(generateEmails(company, contacts, initiatives, hiringSignals, finalWhatWeSell)),
+      Promise.resolve(generateCallScript(company, initiatives, hiringSignals, finalWhatWeSell)),
+      generateEmailHooks(company, contacts, initiatives, hiringSignals, finalWhatWeSell),
+    ]);
 
     // Step 7: Return full result
     const result: ResearchOutput = {
@@ -98,6 +89,7 @@ export async function POST(request: NextRequest) {
       messaging: {
         emails,
         call_script: callScript,
+        email_hooks: emailHooks,
       },
     };
 

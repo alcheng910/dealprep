@@ -60,6 +60,7 @@ export interface CallScript {
 export interface Messaging {
   emails: EmailDraft[];
   call_script: CallScript;
+  email_hooks: string[];
 }
 
 export interface ResearchOutput {

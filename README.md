@@ -34,6 +34,9 @@ You'll need accounts and API keys for:
 - **Tavily** - Company and news research
 - **Firecrawl** - Website scraping
 - **Apollo.io** - Contact enrichment
+- **Anthropic Claude** (optional) - AI-powered email hook generation
+  - System works without this key (falls back to template-based hooks)
+  - Get your key at: https://console.anthropic.com
 
 Add these to your `.env.local` file.
 
@@ -79,6 +82,7 @@ Open [http://localhost:3000](http://localhost:3000) in your browser.
 - Buying signals (tech + hiring + strategic initiatives)
 - Verified contact list (2-3 personas)
 - Draft cold emails with real personalization
+- 10 AI-generated email hooks (opening lines with variety)
 - Cold call opener + discovery questions
 
 ### Export Formats
@@ -129,6 +133,7 @@ See `.env.example` for all required variables.
 TAVILY_API_KEY=your_tavily_key
 FIRECRAWL_API_KEY=your_firecrawl_key
 APOLLO_API_KEY=your_apollo_key
+ANTHROPIC_API_KEY=your_anthropic_key  # Optional - for AI-generated email hooks
 
 # Optional: Enable test mode to avoid consuming API credits
 MOCK_MODE=false
@@ -156,6 +161,16 @@ MOCK_MODE=false
 - No saved history
 - No email sending
 - No CRM integration
+
+---
+
+## Project Research & Personas
+This fork includes strategic research to guide skill development and agent capabilities.
+
+- `/research/` — Contains deep-dive persona analyses, competitor notes, pain points, and opportunity maps.
+  - [AE SaaS Persona](/research/persona.md) — Detailed breakdown for Account Executives (updated Feb 2026), including workflows, pains, and AI capability ideas to inspire new skills.
+
+These docs help prioritize features that solve real user problems (e.g., automating research, CRM updates, deal risk flagging). Feel free to contribute more personas or use them when building/submitting skills!
 
 ---
 

@@ -289,6 +289,24 @@ export default function Home() {
                 </div>
               </div>
             )}
+
+            {result.messaging.email_hooks && result.messaging.email_hooks.length > 0 && (
+              <div className="bg-white rounded-lg shadow-lg p-8">
+                <h3 className="text-xl font-bold mb-4">Email Hooks ({result.messaging.email_hooks.length})</h3>
+                <p className="text-sm text-slate-600 mb-4">
+                  AI-generated opening lines for personalized outreach
+                </p>
+                <div className="space-y-3">
+                  {result.messaging.email_hooks.map((hook, i) => (
+                    <div key={i} className="border-l-4 border-purple-500 pl-4 py-2 bg-slate-50 rounded">
+                      <p className="text-sm">
+                        <span className="font-semibold text-purple-600">{i + 1}.</span> {hook}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
         )}
 
