@@ -90,7 +90,7 @@ export async function crawlForJobs(
           const lines = result.markdown.split('\n');
           const jobPattern = /engineer|developer|manager|director|vp|sales|marketing|analyst/i;
 
-          lines.forEach((line) => {
+          lines.forEach((line: string) => {
             if (jobPattern.test(line) && line.length < 100) {
               jobs.push({
                 title: line.trim(),

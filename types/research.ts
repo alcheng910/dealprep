@@ -45,12 +45,6 @@ export interface Contact {
   phone: string;
 }
 
-export interface EmailDraft {
-  subject: string;
-  body: string;
-  personalization_points: string[];
-}
-
 export interface CallScript {
   opener: string;
   discovery_questions: string[];
@@ -58,7 +52,6 @@ export interface CallScript {
 }
 
 export interface Messaging {
-  emails: EmailDraft[];
   call_script: CallScript;
   email_hooks: string[];
 }

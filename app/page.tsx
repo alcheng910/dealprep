@@ -1,12 +1,15 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { ResearchOutput } from '@/types/research';
 
 export default function Home() {
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<ResearchOutput | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [showSettings, setShowSettings] = useState(false);
+  const [productValue, setProductValue] = useState("CRE deal management system");
+  const [personaValue, setPersonaValue] = useState("acquisition associate or analyst");
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -17,9 +20,8 @@ export default function Home() {
     const formData = new FormData(e.currentTarget);
     const payload = {
       company_url: formData.get('url') as string,
-      what_we_sell: formData.get('product') as string || undefined,
-      target_persona: formData.get('persona') as string || undefined,
-      region: formData.get('region') as string || undefined,
+      what_we_sell: productValue || undefined,
+      target_persona: personaValue || undefined,
     };
 
     try {
@@ -43,37 +45,16 @@ export default function Home() {
     }
   };
 
-  const downloadJSON = () => {
-    if (!result) return;
-    const blob = new Blob([JSON.stringify(result, null, 2)], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `${result.company.name}-research.json`;
-    a.click();
-  };
+  useEffect(() => {
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && showSettings) {
+        setShowSettings(false);
+      }
+    };
 
-  const downloadCSV = () => {
-    if (!result || result.contacts.length === 0) return;
-
-    const headers = ['Name', 'Title', 'Email', 'Email Verified', 'Phone', 'LinkedIn URL'];
-    const rows = result.contacts.map(c => [
-      c.name,
-      c.title,
-      c.email,
-      c.email_verified ? 'Yes' : 'No',
-      c.phone,
-      c.linkedin_url,
-    ]);
-
-    const csv = [headers, ...rows].map(row => row.join(',')).join('\n');
-    const blob = new Blob([csv], { type: 'text/csv' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `${result.company.name}-contacts.csv`;
-    a.click();
-  };
+    window.addEventListener('keydown', handleEscape);
+    return () => window.removeEventListener('keydown', handleEscape);
+  }, [showSettings]);
 
   return (
     <main className="min-h-screen p-8 bg-gradient-to-br from-slate-50 to-slate-100">
@@ -82,9 +63,22 @@ export default function Home() {
           <h1 className="text-5xl font-bold text-slate-900 mb-4">
             DealPrep
           </h1>
-          <p className="text-xl text-slate-600">
-            Turn any company URL into a complete sales prep packet
-          </p>
+        </div>
+
+        <div className="flex justify-end mb-4">
+          <button
+            type="button"
+            onClick={() => setShowSettings(true)}
+            disabled={loading}
+            className="flex items-center gap-2 px-4 py-2 text-sm text-slate-600 hover:text-slate-900 hover:bg-white rounded-lg transition disabled:opacity-50 disabled:cursor-not-allowed"
+            aria-label="Open settings"
+          >
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+            </svg>
+            Settings
+          </button>
         </div>
 
         <div className="bg-white rounded-lg shadow-lg p-8 mb-8">
@@ -104,50 +98,6 @@ export default function Home() {
               />
             </div>
 
-            <div>
-              <label htmlFor="product" className="block text-sm font-medium text-slate-700 mb-2">
-                What we sell (optional)
-              </label>
-              <input
-                type="text"
-                id="product"
-                name="product"
-                defaultValue="CRE deal management system"
-                placeholder="CRE deal management system"
-                className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                disabled={loading}
-              />
-            </div>
-
-            <div>
-              <label htmlFor="persona" className="block text-sm font-medium text-slate-700 mb-2">
-                Target Persona (optional)
-              </label>
-              <input
-                type="text"
-                id="persona"
-                name="persona"
-                defaultValue="acquisition associate or analyst"
-                placeholder="acquisition associate or analyst"
-                className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                disabled={loading}
-              />
-            </div>
-
-            <div>
-              <label htmlFor="region" className="block text-sm font-medium text-slate-700 mb-2">
-                Region / Market (optional)
-              </label>
-              <input
-                type="text"
-                id="region"
-                name="region"
-                placeholder="North America"
-                className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                disabled={loading}
-              />
-            </div>
-
             <button
               type="submit"
               className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg transition duration-200 disabled:bg-slate-400"
@@ -157,6 +107,78 @@ export default function Home() {
             </button>
           </form>
         </div>
+
+        {showSettings && (
+          <div
+            className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4"
+            onClick={(e) => {
+              if (e.target === e.currentTarget) {
+                setShowSettings(false);
+              }
+            }}
+          >
+            <div className="bg-white rounded-lg shadow-xl max-w-md w-full p-6">
+              <div className="flex justify-between items-center mb-6">
+                <h3 className="text-xl font-bold text-slate-900">Settings</h3>
+                <button
+                  onClick={() => setShowSettings(false)}
+                  className="text-slate-400 hover:text-slate-600 transition"
+                  aria-label="Close settings"
+                >
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+
+              <div className="space-y-4">
+                <div>
+                  <label htmlFor="settings-product" className="block text-sm font-medium text-slate-700 mb-2">
+                    What we sell
+                  </label>
+                  <input
+                    type="text"
+                    id="settings-product"
+                    value={productValue}
+                    onChange={(e) => setProductValue(e.target.value)}
+                    placeholder="CRE deal management system"
+                    className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    autoFocus
+                  />
+                  <p className="mt-1 text-xs text-slate-500">
+                    This helps personalize the research and messaging
+                  </p>
+                </div>
+
+                <div>
+                  <label htmlFor="settings-persona" className="block text-sm font-medium text-slate-700 mb-2">
+                    Target Persona
+                  </label>
+                  <input
+                    type="text"
+                    id="settings-persona"
+                    value={personaValue}
+                    onChange={(e) => setPersonaValue(e.target.value)}
+                    placeholder="acquisition associate or analyst"
+                    className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  />
+                  <p className="mt-1 text-xs text-slate-500">
+                    The job title or role you&apos;re targeting for outreach
+                  </p>
+                </div>
+              </div>
+
+              <div className="mt-6 flex justify-end gap-3">
+                <button
+                  onClick={() => setShowSettings(false)}
+                  className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition"
+                >
+                  Done
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
 
         {loading && (
           <div className="bg-white rounded-lg shadow-lg p-8 text-center">
@@ -173,123 +195,6 @@ export default function Home() {
 
         {result && (
           <div className="space-y-6">
-            <div className="flex gap-4">
-              <button
-                onClick={downloadJSON}
-                className="px-4 py-2 bg-slate-600 hover:bg-slate-700 text-white rounded-lg transition"
-              >
-                Download JSON
-              </button>
-              {result.contacts.length > 0 && (
-                <button
-                  onClick={downloadCSV}
-                  className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition"
-                >
-                  Download Contacts CSV
-                </button>
-              )}
-            </div>
-
-            <div className="bg-white rounded-lg shadow-lg p-8">
-              <h2 className="text-2xl font-bold mb-4">{result.company.name}</h2>
-              <p className="text-slate-600 mb-4">{result.company.summary}</p>
-              <div className="grid grid-cols-2 gap-4 text-sm">
-                <div>
-                  <span className="font-semibold">Industry:</span> {result.company.industry}
-                </div>
-                <div>
-                  <span className="font-semibold">Size:</span> {result.company.size_estimate}
-                </div>
-              </div>
-            </div>
-
-            <div className="bg-white rounded-lg shadow-lg p-8">
-              <h3 className="text-xl font-bold mb-4">ICP Fit</h3>
-              <div className={`inline-block px-4 py-2 rounded-full ${result.icp_fit.fit ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
-                {result.icp_fit.fit ? 'Fits ICP' : 'Does Not Fit ICP'}
-              </div>
-              {result.icp_fit.reasons.length > 0 && (
-                <div className="mt-4">
-                  <p className="font-semibold mb-2">Reasons:</p>
-                  <ul className="list-disc list-inside space-y-1">
-                    {result.icp_fit.reasons.map((reason, i) => (
-                      <li key={i} className="text-slate-600">{reason}</li>
-                    ))}
-                  </ul>
-                </div>
-              )}
-              {result.icp_fit.disqualifiers.length > 0 && (
-                <div className="mt-4">
-                  <p className="font-semibold mb-2">Disqualifiers:</p>
-                  <ul className="list-disc list-inside space-y-1">
-                    {result.icp_fit.disqualifiers.map((disq, i) => (
-                      <li key={i} className="text-red-600">{disq}</li>
-                    ))}
-                  </ul>
-                </div>
-              )}
-            </div>
-
-            {result.initiatives.length > 0 && (
-              <div className="bg-white rounded-lg shadow-lg p-8">
-                <h3 className="text-xl font-bold mb-4">Strategic Initiatives</h3>
-                <div className="space-y-4">
-                  {result.initiatives.map((init, i) => (
-                    <div key={i} className="border-l-4 border-blue-500 pl-4">
-                      <p className="font-semibold">{init.title}</p>
-                      <p className="text-sm text-slate-600">{init.why_it_matters}</p>
-                      <a href={init.source_url} target="_blank" rel="noopener noreferrer" className="text-xs text-blue-600 hover:underline">
-                        Source
-                      </a>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {result.contacts.length > 0 && (
-              <div className="bg-white rounded-lg shadow-lg p-8">
-                <h3 className="text-xl font-bold mb-4">Contacts ({result.contacts.length})</h3>
-                <div className="space-y-4">
-                  {result.contacts.map((contact, i) => (
-                    <div key={i} className="border rounded-lg p-4">
-                      <p className="font-semibold text-lg">{contact.name}</p>
-                      <p className="text-slate-600">{contact.title}</p>
-                      <div className="mt-2 space-y-1 text-sm">
-                        <p>
-                          <span className="font-semibold">Email:</span> {contact.email}
-                          {contact.email_verified && <span className="ml-2 text-green-600">✓ Verified</span>}
-                        </p>
-                        {contact.phone && <p><span className="font-semibold">Phone:</span> {contact.phone}</p>}
-                        {contact.linkedin_url && (
-                          <a href={contact.linkedin_url} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
-                            LinkedIn Profile
-                          </a>
-                        )}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {result.messaging.emails.length > 0 && (
-              <div className="bg-white rounded-lg shadow-lg p-8">
-                <h3 className="text-xl font-bold mb-4">Email Templates</h3>
-                <div className="space-y-6">
-                  {result.messaging.emails.map((email, i) => (
-                    <div key={i} className="border rounded-lg p-4">
-                      <p className="font-semibold mb-2">Subject: {email.subject}</p>
-                      <pre className="whitespace-pre-wrap text-sm bg-slate-50 p-4 rounded">{email.body}</pre>
-                      <div className="mt-2 text-xs text-slate-500">
-                        Personalization: {email.personalization_points.join(' • ')}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
             {result.messaging.email_hooks && result.messaging.email_hooks.length > 0 && (
               <div className="bg-white rounded-lg shadow-lg p-8">
                 <h3 className="text-xl font-bold mb-4">Email Hooks ({result.messaging.email_hooks.length})</h3>

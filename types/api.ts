@@ -2,7 +2,6 @@ export interface ResearchRequest {
   company_url: string;
   what_we_sell?: string;
   target_persona?: string;
-  region?: string;
 }
 
 export interface APIError {
